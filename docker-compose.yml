@@ -58,7 +58,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "80:80"
+      - "81:80"
       - "443:443"
     links:
       - database
@@ -96,13 +96,16 @@ services:
     links:
       - panel
     volumes:
-      - "./wings/var/run/docker.sock:/var/run/docker.sock"
-      - "./wings/var/lib/docker/containers/:/var/lib/docker/containers/"
+      # - "./wings/var/run/docker.sock:/var/run/docker.sock"
+      # - "./wings/var/lib/docker/containers/:/var/lib/docker/containers/"
       - "./wings/etc/pterodactyl/:/etc/pterodactyl/"
-      - "./wings/var/lib/pterodactyl/:/var/lib/pterodactyl/"
+      # - "./wings/var/lib/pterodactyl/:/var/lib/pterodactyl/"
       - "./wings/var/log/pterodactyl/:/var/log/pterodactyl/"
       - "./wings/tmp/pterodactyl/:/tmp/pterodactyl/"
       - "./wings/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers/:/var/lib/docker/containers/"
+      - "/var/lib/pterodactyl/:/var/lib/pterodactyl/"
 networks:
   # myoverlay:
   #   name: myoverlay
