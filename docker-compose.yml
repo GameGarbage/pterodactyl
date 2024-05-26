@@ -45,17 +45,20 @@ services:
       MYSQL_USER: "pterodactyl"
     ports:
       - "3306:3306"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   cache:
     image: redis:alpine
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   panel:
     image: ghcr.io/pterodactyl/panel:latest
     restart: always
-    networks:
-      - default
-      - wings0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
-      - "80:80"
+      - "81:80"
       - "443:443"
     links:
       - database
@@ -77,11 +80,10 @@ services:
       DB_HOST: "database"
       DB_PORT: "3306"
   wings:
-    image: ghcr.io/pterodactyl/wings:v1.6.1
+    image: ghcr.io/pterodactyl/wings:latest
     restart: always
-    networks: 
-      - default
-      - wings0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8080:8080"
       - "2022:2022"
@@ -94,13 +96,16 @@ services:
     links:
       - panel
     volumes:
-      - "./wings/var/run/docker.sock:/var/run/docker.sock"
-      - "./wings/var/lib/docker/containers/:/var/lib/docker/containers/"
+      # - "./wings/var/run/docker.sock:/var/run/docker.sock"
+      # - "./wings/var/lib/docker/containers/:/var/lib/docker/containers/"
       - "./wings/etc/pterodactyl/:/etc/pterodactyl/"
-      - "./wings/var/lib/pterodactyl/:/var/lib/pterodactyl/"
+      # - "./wings/var/lib/pterodactyl/:/var/lib/pterodactyl/"
       - "./wings/var/log/pterodactyl/:/var/log/pterodactyl/"
       - "./wings/tmp/pterodactyl/:/tmp/pterodactyl/"
       - "./wings/etc/ssl/certs:/etc/ssl/certs:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers/:/var/lib/docker/containers/"
+      - "/var/lib/pterodactyl/:/var/lib/pterodactyl/"
 networks:
   # myoverlay:
   #   name: myoverlay
@@ -109,15 +114,15 @@ networks:
   #   ipam:
   #     config:
   #       - subnet: 172.22.0.0/16
-  default:
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+  # default:
+  #   ipam:
+  #     config:
+  #       - subnet: "172.21.0.0/32"
   wings0:
     name: wings0
     driver: bridge
     ipam:
       config:
-        - subnet: "172.21.0.0/16"
+        - subnet: "172.21.1.0/24"
     driver_opts:
       com.docker.network.bridge.name: wings0
