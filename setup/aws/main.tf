@@ -1,11 +1,30 @@
 provider "aws" {
-  region = "us-east-1"
+  profile = "motify-dev"
+  region  = "us-east-1"
 }
 
+# Find the latest Ubuntu 20.04 AMI
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical's AWS account ID
+}
+
+
 resource "aws_instance" "pterodactyl" {
-  ami           = "ami-12345678" # Replace with the desired AMI (e.g., Ubuntu 20.04)
-  instance_type = "t2.medium"
-  key_name      = "your-key-name"
+  instance_type   = "t2.medium"
+  ami             = data.aws_ami.ubuntu.id
+  key_name        = "dev-key"
   security_groups = ["pterodactyl-sg"]
 
   # User Data script
