@@ -5,8 +5,15 @@ apt update -y && apt upgrade -y
 apt install -y docker.io curl unzip
 
 # Install Docker
-systemctl start docker
-systemctl enable docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Create the .env file for Docker
+echo "DOCKER_USERNAME=phatnguyentan0491" > /home/ubuntu/.env
+echo "DOCKER_PASSWORD=Loc2002_bl" >> /home/ubuntu/.env
+
+# Set proper permissions for the .env file
+chmod 600 /home/ubuntu/.env
 
 # Install Docker Compose
 curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -22,7 +29,7 @@ version: '3.8'
 
 services:
   panel:
-    image: pterodactyl/panel:latest
+    image: ghcr.io/pterodactyl/panel:latest
     container_name: pterodactyl_panel
     ports:
       - "80:80"
@@ -40,7 +47,7 @@ services:
       - db
 
   wings:
-    image: pterodactyl/wings:latest
+    image: ghcr.io/pterodactyl/wings:latest
     container_name: pterodactyl_wings
     ports:
       - "8080:8080"
@@ -67,6 +74,12 @@ volumes:
   wings_data:
   db_data:
 EOF
+
+sudo usermod -aG docker $USER
+newgrp docker
+
+export $(cat .env | xargs)
+echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
 # Deploy the Docker Compose stack
 docker-compose up -d
