@@ -8,13 +8,6 @@ apt install -y docker.io curl unzip
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# Create the .env file for Docker
-echo "DOCKER_USERNAME=phatnguyentan0491" > /home/ubuntu/.env
-echo "DOCKER_PASSWORD=Loc2002_bl" >> /home/ubuntu/.env
-
-# Set proper permissions for the .env file
-chmod 600 /home/ubuntu/.env
-
 # Install Docker Compose
 curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
@@ -22,6 +15,13 @@ chmod +x /usr/local/bin/docker-compose
 # Create a directory for Pterodactyl
 mkdir -p /opt/pterodactyl
 cd /opt/pterodactyl
+
+# Create the .env file for Docker
+echo "DOCKER_USERNAME=phatnguyentan0491" > ./.env
+echo "DOCKER_PASSWORD=Loc2002_bl" >> ./.env
+
+# Set proper permissions for the .env file
+chmod 600 ./.env
 
 # Write the Docker Compose file
 cat > docker-compose.yml <<EOF
@@ -59,7 +59,7 @@ services:
       - WINGS_TOKEN=your-wings-token
 
   db:
-    image: mariadb:10.6
+    image: mariadb:10.5
     container_name: pterodactyl_db
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
