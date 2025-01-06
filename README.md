@@ -1,3 +1,12 @@
+ISSUE (!!WARNING):
+Setup pterodactyl is complicated specially on cloud, there are some issue:
+- 3 dockers panel, wing, database is complicated.
+- on local, fail to load api/system make health check fail.
+- on cloud, more complicated, even can not run because mission config.yml
+- Less efficiency, depend on nest and pterodactyl, less customize.
+SOLUTION:
+- Switch to general solution like kubernetes, docker and specific game.
+
 How to start?
 docker-compose up
 
